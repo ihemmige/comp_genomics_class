@@ -3,6 +3,7 @@
 #include <fstream> // For file handling
 #include <string> // For string operations
 #include <unordered_map>
+#include <unordered_set>
 #include <algorithm>
 
 int main(int argc, char* argv[]) {
@@ -29,6 +30,12 @@ int main(int argc, char* argv[]) {
       {"GGU", 'G'}, {"GGC", 'G'}, {"GGA", 'G'}, {"GGG", 'G'}
     };
 
+    // set of all the amino acids
+    std::unordered_set<char> aminoAcids;
+    for (const auto& pair : codonTable) {
+        aminoAcids.insert(pair.second);
+    }
+
     // map each amino acid to its optimal codon
     std::unordered_map<char, std::pair<std::string, int>> optimalCodons;
     for (auto pair : codonTable) {
@@ -50,10 +57,16 @@ int main(int argc, char* argv[]) {
     std::ifstream inp(input_file);
     // Open output file for writing
     std::ofstream outp(output_file);
+    char c = -1;
     
     // get the amino acid string
     std::string aminoString;
-    std::getline(inp, aminoString);
+    while(inp.get(c)) {
+      // Check if the character is a valid amino acid, save if so
+      if(aminoAcids.find(c) != aminoAcids.end()) {
+        aminoString.push_back(c);
+      }
+    }
 
     // get optimal codon for each amino acid
     std::string result;
